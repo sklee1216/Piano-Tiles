@@ -9,6 +9,8 @@ void init_tiles(void);
 void nano_wait(unsigned int n);
 void move_tiles(int tile_num);
 
+extern const tile_struct tiles;
+
 int score = 0;
 char score_string[10];
 char conc_string[10];
@@ -150,25 +152,32 @@ void TIM2_IRQHandler(void)
 
     // Look at the next item in the event array and check if it is
     // time to play that note.
+    for (int i=0; i < 20; i++){
+        if (events[i].when == time){
+
+            set_flag(events[i].track-1);
+
+        }
+    }
     while(events[n].when == time) {
         // If the volume is 0, that means turn the note off.
         note_on(0,0,events[n].note, events[n].volume);
         flag = 1;
+        move_tiles(events[n].track);
         n++;
-    }
 
     // Increment the time by one tick.
     time += 1;
     if (flag) {
-        //move_tiles(events[n-1].track);
+        //move_tiles(events[n].track);
     }
 
     //When we reach the end of the event array, start over.
-//    if ( n >= sizeof events / sizeof events[0]) {
-//        n = 0;
-//        time = 0;
-//    }
-}
+    if ( n >= sizeof events / sizeof events[0]) {
+        n = 0;
+       time = 0;
+    }
+    }
 
 
 // Configure timer 2 so that it invokes the Update interrupt
@@ -246,18 +255,15 @@ void TIM7_IRQHandler(void){
     TIM7->SR &= ~(1<<0);
 
 
+    move_tiles(0);
+    //nano_wait(100000000);
     move_tiles(1);
-    //move_tiles(2);
-    //move_tiles(3);
-    //move_tiles(4);
-    //move_tiles(5);
-    //move_tiles(6);
-    //move_tiles(7);
-    //move_tiles(8);
-
-    //nano_wait(100000);
-
-
+    move_tiles(2);
+    move_tiles(3);
+    move_tiles(4);
+    move_tiles(5);
+    move_tiles(6);
+    move_tiles(7);
 }
 
 void TIM15_IRQHandler(void){
@@ -370,7 +376,7 @@ int main(void)
 
     setup_buttons();
     LCD_Setup(); // this will call init_lcd_spi()
-    init_tiles();
+    //init_tiles();
     init_tim15();
     init_tim7();
 //
@@ -395,6 +401,6 @@ int main(void)
      init_tim6();        // initialize TIM6
      init_tim2(1000); // initialize TIM2
 
-     for (;;) {}
+
 }
 

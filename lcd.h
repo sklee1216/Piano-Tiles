@@ -11,6 +11,8 @@ typedef uint8_t u8;
 typedef uint16_t u16;
 typedef int16_t s16;
 
+
+
 // The LCD device structure definition.
 //
 typedef struct
@@ -26,6 +28,7 @@ typedef struct
     void (*select)(int);
     void (*reg_select)(int);
 } lcd_dev_t;
+
 
 // The LCD device.
 // This will be initialized by LCD_direction() so that the
