@@ -1,0 +1,400 @@
+#include "stm32f0xx.h"
+#include "lcd.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include "midiplay.h"
+
+void init_tiles(void);
+void nano_wait(unsigned int n);
+void move_tiles(int tile_num);
+
+int score = 0;
+char score_string[10];
+char conc_string[10];
+
+#include "stm32f0xx.h"
+#include <stdint.h>
+#include "midiplay.h"
+
+// The number of simultaneous voices to support.
+#define VOICES 1
+
+// An array of "voices".  Each voice can be used to play a different note.
+// Each voice has a step size and an offset into the wave table.
+struct {
+    uint8_t in_use; // 1 or 0
+    uint8_t note; // note
+    uint8_t chan; //
+    uint8_t volume;
+    int     step; // step is updated offset
+    int     offset; // constant offset
+} voice[VOICES];
+
+// We'll use the Timer 6 IRQ to recompute samples and feed those
+// samples into the DAC.
+void TIM6_DAC_IRQHandler(void)
+{
+    // TODO: Remember to acknowledge the interrupt right here.
+    TIM6->SR = ~TIM_SR_UIF;
+
+
+    int sample = 0;
+    // for loop to cover all 8 voices
+    for(int x=0; x < sizeof voice / sizeof voice[0]; x++) {
+    // if the note is in use
+        if (voice[x].in_use) {
+            voice[x].offset += voice[x].step; // creates offset that is "step" sized for next note
+            if (voice[x].offset >= N<<16)
+                voice[x].offset -= N<<16;
+            sample += (wavetable[voice[x].offset>>16] * voice[x].volume) >> 4;
+        }
+    }
+    sample = (sample >> 10) + 2048;
+    if (sample > 4095)
+        sample = 4095;
+    else if (sample < 0)
+        sample = 0;
+    DAC->DHR12R1 = sample;
+}
+
+// Initialize Timer 6 so that it calls TIM6_DAC_IRQHandler
+// at exactly RATE times per second.
+void init_tim6(void)
+{
+    RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+    TIM6->PSC = (480 - 1);
+    TIM6->ARR = (100000/RATE - 1);
+    TIM6->CR2 &= ~0x70;
+    TIM6->CR2 |= 0x20;
+    TIM6->DIER |= TIM_DIER_UIE;
+    TIM6->CR1 |= TIM_CR1_CEN;
+
+    NVIC->ISER[0] |= 1<<TIM6_DAC_IRQn;
+}
+
+// Initialize the DAC so that it can output analog samples
+// on PA4.  Configure it to be triggered by TIM6 TRGO.
+void init_dac(void)
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+    GPIOA->MODER |= 3<<(4*2);
+
+    RCC->APB1ENR |= RCC_APB1ENR_DACEN; // enable clock to DAC
+    DAC->CR &= ~(DAC_CR_TSEL1); // tim6 trgo
+    DAC->CR |= DAC_CR_TEN1; // trigger enable
+    DAC->CR |= DAC_CR_EN1; // dac enable
+}
+
+// Find the voice current playing a note, and turn it off.
+void note_off(int time, int chan, int key, int velo)
+{
+    int n;
+    for(n=0; n<sizeof voice / sizeof voice[0]; n++) {
+        if (voice[n].in_use && voice[n].note == key) {
+            voice[n].in_use = 0; // disable it first...
+            voice[n].chan = 0;   // ...then clear its values
+            voice[n].note = key;
+            voice[n].step = step[key];
+            return;
+        }
+    }
+}
+
+// Find an unused voice, and use it to play a note.
+void note_on(int time, int chan, int key, int velo)
+{
+    if (velo == 0) {
+        note_off(time, chan, key, velo);
+        return;
+    }
+    int n;
+    for(n=0; n<sizeof voice / sizeof voice[0]; n++) {
+        if (voice[n].in_use == 0) {
+            voice[n].note = key;
+            voice[n].step = step[key];
+            voice[n].offset = 0;
+            voice[n].volume = velo;
+            voice[n].chan = chan;
+            voice[n].in_use = 1;
+            return;
+        }
+    }
+}
+
+// An array of structures that say when to turn notes on or off.
+struct {
+    uint16_t when;
+    uint16_t note;
+    uint16_t volume;
+    uint16_t duration;
+    uint16_t track;
+
+} events[] = {
+        {480,84,0x75,76, 8}, {556,84,0x00,0, 8}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
+        {1440,91,0x75,80, 4}, {1520,91,0x00,0, 4}, {1920,91,0x75,76, 2}, {1996,91,0x00,0, 2},
+        {2400,93,0x76,72, 7}, {2472,93,0x00,0, 7}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
+        {2880,96,0x67,80, 2}, {2960,96,0x00,0, 2}, {3120,93,0x6d,60, 3}, {3180,93,0x00,0, 3},
+        {3360,91,0x79,80, 4}, {3440,91,0x00,0, 4}, {4320,89,0x70,88, 2}, {4408,89,0x00,0, 2},
+};
+
+
+int time = 0;
+int n = 0;
+int j = 0;
+int8_t flag = 0;
+void TIM2_IRQHandler(void)
+{
+    // TODO: Remember to acknowledge the interrupt here!
+    TIM2->SR = ~TIM_SR_UIF;
+
+    // Look at the next item in the event array and check if it is
+    // time to play that note.
+    while(events[n].when == time) {
+        // If the volume is 0, that means turn the note off.
+        note_on(0,0,events[n].note, events[n].volume);
+        flag = 1;
+        n++;
+    }
+
+    // Increment the time by one tick.
+    time += 1;
+    if (flag) {
+        //move_tiles(events[n-1].track);
+    }
+
+    //When we reach the end of the event array, start over.
+//    if ( n >= sizeof events / sizeof events[0]) {
+//        n = 0;
+//        time = 0;
+//    }
+}
+
+
+// Configure timer 2 so that it invokes the Update interrupt
+// every n microseconds.  To do so, set the prescaler to divide
+// by 48.  Then the CNT will count microseconds up to the ARR value.
+// Basically ARR = n-1
+// Set the ARPE bit in the CR1 so that the timer waits until the next
+// update before changing the effective ARR value.
+// Call NVIC_SetPriority() to set a low priority for Timer 2 interrupt.
+// See the lab 6 text to understand how to do so.
+void init_tim2(int n) {
+    // TODO: you fill this in.
+
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+    TIM2->PSC = (48 - 1);
+    TIM2->ARR = (n - 1);
+    TIM2->CR1 |= TIM_CR1_ARPE;
+    TIM2->DIER |= TIM_DIER_UIE;
+    TIM2->CR1 |= TIM_CR1_CEN;
+
+    NVIC->ISER[0] |= 1<<TIM2_IRQn;
+
+    NVIC_SetPriority(TIM2_IRQn, 3);
+}
+
+void init_lcd_spi(void)
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+    GPIOB->MODER &= ~0x30c30000;
+    GPIOB->MODER |= 0x10410000;
+    GPIOB->ODR |= 0x4900;
+
+    GPIOB->MODER &= ~0xc0;
+    GPIOB->MODER |= 0x80;
+
+    GPIOB->MODER &= ~0xc00;
+    GPIOB->MODER |= 0x800;
+
+    GPIOB->AFR[0] &= ~0xf0f000;
+
+    RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+    SPI1->CR1 &= ~SPI_CR1_SPE;
+    SPI1->CR1 &= ~0x3f;
+    SPI1->CR1 |= SPI_CR1_MSTR;
+    SPI1->CR2 = SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0;
+    SPI1->CR1 |= SPI_CR1_SSM | SPI_CR1_SSI;
+    SPI1->CR1 |= SPI_CR1_SPE;
+}
+
+void init_tim7(void){
+
+    RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
+    TIM7->PSC = 25;
+    TIM7->ARR = 480000-1;
+    TIM7->DIER |= TIM_DIER_UIE;
+    TIM7->CR1 |= TIM_CR1_CEN;
+    NVIC->ISER[0] = 1<<18;
+    NVIC_SetPriority(TIM7_IRQn,3);
+
+
+}
+
+void init_tim15(void){
+    RCC->APB2ENR |= RCC_APB2ENR_TIM15EN;
+    TIM15->PSC = 0;
+    TIM15->ARR = 4800-1;
+    TIM15->DIER |= TIM_DIER_UIE;
+    TIM15->CR1 |= TIM_CR1_CEN;
+    NVIC->ISER[0] = 1<<20;
+    NVIC_SetPriority(TIM15_IRQn,3);
+}
+
+void TIM7_IRQHandler(void){
+
+    TIM7->SR &= ~(1<<0);
+
+
+    move_tiles(1);
+    //move_tiles(2);
+    //move_tiles(3);
+    //move_tiles(4);
+    //move_tiles(5);
+    //move_tiles(6);
+    //move_tiles(7);
+    //move_tiles(8);
+
+    //nano_wait(100000);
+
+
+}
+
+void TIM15_IRQHandler(void){
+    TIM15->SR &= ~(1<<0);
+    int a = (GPIOA->IDR) & 1;
+
+    if (a == 1){
+        init_tim7();
+    }
+
+
+
+}
+
+
+
+void setup_buttons(void)
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+    GPIOC->MODER &= ~0xffff;
+    GPIOC->MODER |= 0x55 << (4*2);
+    GPIOC->OTYPER &= ~0xf0;
+    GPIOC->OTYPER |= 0xf0;
+    GPIOC->PUPDR &= ~0xff;
+    GPIOC->PUPDR |= 0x55;
+
+    RCC->AHBENR |= 1<<17;
+    GPIOA->PUPDR |= 1<<1;
+}
+
+//void basic_drawing(void);
+//void move_ball(void);
+
+void init_spi1() {
+    // PB13  SPI1_SCK
+    // PC2  SPI1_MISO (AF1)
+    // PB15  SPI1_MOSI
+    // PB12 SPI1_NSS
+    RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+    GPIOB->MODER |= GPIO_MODER_MODER13_1;
+    GPIOB->MODER &= ~GPIO_MODER_MODER13_0;
+    GPIOB->MODER |= GPIO_MODER_MODER15_1;
+    GPIOB->MODER &= ~GPIO_MODER_MODER15_0;
+    GPIOB->MODER |= GPIO_MODER_MODER12_1;
+    GPIOB->MODER &= ~GPIO_MODER_MODER12_0;
+
+
+    RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+
+    SPI2->CR1 &= ~SPI_CR1_SPE;
+
+    SPI2->CR1 |= SPI_CR1_BR;
+
+//    SPI2->CR2 = SPI_CR2_DS_3 | SPI_CR2_DS_0 | SPI_CR2_SSOE | SPI_CR2_NSSP | SPI_CR2_TXDMAEN;
+    SPI2->CR2 = SPI_CR2_DS_3 | SPI_CR2_DS_0 | SPI_CR2_SSOE | SPI_CR2_NSSP;
+
+
+    SPI2->CR1 |= SPI_CR1_MSTR;
+
+    SPI2->CR1 |= SPI_CR1_SPE;
+
+}
+
+void spi_cmd(unsigned int data) {
+    while(!(SPI2->SR & SPI_SR_TXE)) {}
+    SPI2->DR = data; // comment out works?
+
+//    if(!(SPI2->SR & SPI_SR_TXE)) {}
+//    else SPI2->DR = data; // comment out works?
+}
+void spi_data(unsigned int data) {
+    spi_cmd(data | 0x200);
+}
+void spi1_init_oled() {
+    nano_wait(1000000);
+    spi_cmd(0x38);
+    spi_cmd(0x08);
+    spi_cmd(0x01);
+    nano_wait(2000000);
+    spi_cmd(0x06);
+    spi_cmd(0x02);
+    spi_cmd(0x0c);
+}
+void spi1_display1(const char *string) {
+    spi_cmd(0x02);
+    while(*string != '\0') {
+        spi_data(*string);
+        string++;
+    }
+}
+void spi1_display2(const char *string) {
+    spi_cmd(0xc0);
+    while(*string != '\0') {
+        spi_data(*string);
+        string++;
+    }
+}
+
+
+
+
+int main(void)
+{
+
+//    init_wavetable_hybrid2();      // set up wavetable form
+//     init_dac();         // initialize the DAC
+//     init_tim6();        // initialize TIM6
+//     init_tim2(1000); // initialize TIM2
+
+
+    setup_buttons();
+    LCD_Setup(); // this will call init_lcd_spi()
+    init_tiles();
+    init_tim15();
+    init_tim7();
+//
+//
+//
+//
+    init_spi1();
+    spi1_init_oled();
+//    SPI2->DR = 0;
+    spi1_display1("Press any button");
+    spi1_display2("to start");
+
+//    while(!(SPI2->SR & SPI_SR_TXE)) {}
+//    nano_wait(2000000);
+//    SPI2->CR1 &= ~SPI_CR1_SPE;
+//    RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
+//    nano_wait(2000000);
+
+
+    init_wavetable_hybrid2();      // set up wavetable form
+     init_dac();         // initialize the DAC
+     init_tim6();        // initialize TIM6
+     init_tim2(1000); // initialize TIM2
+
+     for (;;) {}
+}
+
