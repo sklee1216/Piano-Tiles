@@ -14,7 +14,7 @@ struct{
     int x2;
     int y2;
     int flag;
-} tiles[] = {{0,-20,30,0,0},
+} tiles[] = {{0,0,30,0,0},
         {30,-20,60,0,0},
         {60,-20,90,0,0},
         {90,-20,120,0,0},
@@ -127,6 +127,8 @@ void move_tiles(int tile_num){
     tiles[tile_num].y1 += 2;
     tiles[tile_num].y2 += 2;
     }
+
+
 
 }
 
