@@ -132,11 +132,11 @@ struct {
     uint16_t track;
 
 } events[] = {
-        {480,84,0x75,76, 1}, {556,84,0x00,0, 2}, {960,84,0x75,48, 3}, {1008,84,0x00,0, 4},
-        {1440,91,0x75,80, 3}, {1520,91,0x00,0, 3}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 4},
+        {480,84,0x75,76, 1}, {556,84,0x00,0, 2}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 4},
+        {1440,91,0x75,80, 3}, {1520,91,0x00,0, 6}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 8},
         {2400,93,0x76,72, 5}, {2472,93,0x00,0, 5}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
-        {2880,96,0x67,80, 2}, {2960,96,0x00,0, 2}, {3120,93,0x6d,60, 3}, {3180,93,0x00,0, 3},
-        {3360,91,0x79,80, 4}, {3440,91,0x00,0, 4}, {4320,89,0x70,88, 2}, {4408,89,0x00,0, 2},
+        {2880,96,0x67,80, 7}, {2960,96,0x00,0, 2}, {3120,93,0x6d,60, 8}, {3180,93,0x00,0, 3},
+        {3360,91,0x79,80, 4}, {3440,91,0x00,0, 4}, {4320,89,0x70,88, 2}, {4408,89,0x00,0, 2}
 };
 
 
@@ -149,18 +149,18 @@ void TIM2_IRQHandler(void)
     // TODO: Remember to acknowledge the interrupt here!
     TIM2->SR = ~TIM_SR_UIF;
 
-    while(events[n].when == time) {
+    while(events[n].when == (time-1800)) {
             // If the volume is 0, that means turn the note off.
             note_on(0,0,events[n].note, events[n].volume);
             flag = 1;
-            move_tiles(events[n].track);
+
             n++;
         }
 
     // Look at the next item in the event array and check if it is
     // time to play that note.
     for (int i=0; i < 20; i++){
-        if (events[i].when == time){
+        if (events[i].when == time && events[i].duration != 0){
 
             set_flag(events[i].track-1);
 
