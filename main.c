@@ -132,7 +132,7 @@ struct {
     uint16_t track;
 
 } events[] = {
-        {480,84,0x75,76, 1}, {556,84,0x00,0, 1}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
+        {480,84,0x75,76, 1}, {556,84,0x00,0, 2}, {960,84,0x75,48, 3}, {1008,84,0x00,0, 4},
         {1440,91,0x75,80, 3}, {1520,91,0x00,0, 3}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 4},
         {2400,93,0x76,72, 5}, {2472,93,0x00,0, 5}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
         {2880,96,0x67,80, 2}, {2960,96,0x00,0, 2}, {3120,93,0x6d,60, 3}, {3180,93,0x00,0, 3},
@@ -160,7 +160,7 @@ void TIM2_IRQHandler(void)
     // Look at the next item in the event array and check if it is
     // time to play that note.
     for (int i=0; i < 20; i++){
-        if (events[i].when == time && events[i].duration !=0){
+        if (events[i].when == time){
 
             set_flag(events[i].track-1);
 
