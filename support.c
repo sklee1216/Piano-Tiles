@@ -29,7 +29,7 @@ struct{
                 {120,-20,150,0,0},
                 {150,-20,180,0,0},
                 {180,-20,210,0,0},
-                {210,-20,240,0,0},
+                {210,-20,240,0,0}
 };
 
 
@@ -135,6 +135,13 @@ void move_tiles(int tile_num){
     LCD_DrawFillRectangle(tiles[tile_num].x1, tiles[tile_num].y1, tiles[tile_num].x2, tiles[tile_num].y1+1, BLACK);
     tiles[tile_num].y1 += 2;
     tiles[tile_num].y2 += 2;
+    }
+
+    if (tiles[tile_num].y1 == 320){
+        tiles[tile_num].y1 -= 340;
+        tiles[tile_num].y2 -= 340;
+        clear_flag(tile_num);
+
     }
 
 
