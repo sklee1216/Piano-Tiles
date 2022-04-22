@@ -185,3 +185,8 @@ void init_tiles(void){
     LCD_DrawString(20,141, BLACK, WHITE, "Test string!", 16, 0); // opaque background
 }*/
 
+//void bottom_line(void){
+//
+//    LCD_DrawLine(0,100,240,100,RED);
+//}
+
