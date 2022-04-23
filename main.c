@@ -287,6 +287,34 @@ void TIM15_IRQHandler(void){
 
 }
 
+void init_tim3(void){
+    RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+    TIM3->PSC = 0;
+    TIM3->ARR = 4800-1;
+    TIM3->DIER |= TIM_DIER_UIE;
+    TIM3->CR1 |= TIM_CR1_CEN;
+    NVIC->ISER[0] = 1<<16;
+}
+
+void TIM3_IRQHandler(void){
+    TIM3->SR &= ~(1<<0);
+
+    int a = (GPIOC->IDR >> 7) & 1;
+
+    if (a == 1){
+        spi1_display1("Score:           ");
+        spi1_display2("             ");
+        TIM3->DIER &= ~TIM_DIER_UIE;
+
+        init_tim15();
+        init_tim7();
+         init_wavetable_hybrid2();      // set up wavetable form
+         init_dac();         // initialize the DAC
+         init_tim6();        // initialize TIM6
+         init_tim2(1000); // initialize TIM2
+
+    }
+}
 
 
 
@@ -388,8 +416,9 @@ int main(void)
     LCD_Clear(0);
     //bottom_line();
     //init_tiles();
-    init_tim15();
-    init_tim7();
+
+    init_tim3();
+
 //
 //
 //
@@ -407,10 +436,6 @@ int main(void)
 //    nano_wait(2000000);
 
 
-     init_wavetable_hybrid2();      // set up wavetable form
-     init_dac();         // initialize the DAC
-     init_tim6();        // initialize TIM6
-     init_tim2(1000); // initialize TIM2
 
 
 }
