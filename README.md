@@ -1,2 +1,2 @@
 # Piano-Tiles
-Piano style game using C(ARM Cortec-M0)
+Piano Tiles game using C(ARM Cortec-M0)
