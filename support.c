@@ -149,6 +149,18 @@ void move_tiles(int tile_num){
 }
 
 
+//
+int check_led(int n){
+    if (tiles[n].y1 >160 && tiles[n].y2 < 320){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+
+}
+
+
 
 
 

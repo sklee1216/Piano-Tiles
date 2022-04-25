@@ -11,7 +11,7 @@ void move_tiles(int tile_num);
 //void bottom_line(void);
 
 
-int score = 0;
+float score = 0;
 char score_string[10];
 char conc_string[10];
 
@@ -60,7 +60,7 @@ void TIM6_DAC_IRQHandler(void)
     DAC->DHR12R1 = sample;
 }
 
-// Initialize Timer 6 so that it calls TIM6_DAC_IRQHandler
+// Initialize Timer 6 so that it calls TIM6_DAC_IRQHandlerisp1[0] !=
 // at exactly RATE times per second.
 void init_tim6(void)
 {
@@ -133,19 +133,19 @@ struct {
     uint16_t track;
 
 } events[] = {
-        {480,84,0x75,76, 1}, {556,84,0x00,0, 1}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
-        {1440,91,0x75,80, 3}, {1520,91,0x00,0, 3}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 4},
-        {2400,93,0x76,72, 5}, {2472,93,0x00,0, 5}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
-        {2880,96,0x67,80, 7}, {2960,96,0x00,0, 7}, {3120,93,0x6d,60, 8}, {3180,93,0x00,0, 8},
-        {3360,91,0x79,80, 9}, {3440,91,0x00,0, 7}, {4320,89,0x70,88, 10}, {4408,89,0x00,0, 6},
-        {4800,89,0x73, 84, 11}, {4884,89,0x00, 0, 5}, {5280,88,0x73, 80, 12}, {5360,88,0x00, 0, 4},
-        {5760,91,0x79, 76, 13}, {5836,91,0x00, 0, 3}, {6240,86,0x79, 68, 14}, {6308,86,0x00, 0, 2},
-        {6720,86,0x76, 48, 1}, {6768,86,0x00, 0, 1}, {7200,84,0x76, 52, 7}, {7252,84,0x00, 0, 7},
-        {8160,84,0x73, 76, 6}, {8236,84,0x00,0, 6}, {8640,84,0x74, 48, 5}, {8688,84,0x00, 0, 5},
-        {9120,91,0x76, 80, 4}, {9200,91,0x00, 0, 4}, {9600,91,0x79, 76, 3}, {9676,91,0x00, 0 , 3},
-        {10080,93,0x76, 72, 1}, {10152,93,0x00, 0,1}, {10320,94,0x67, 80, 2}, {10400,94,0x00, 0, 2},
-        {10560,96,0x67, 80, 9}, {10640,96,0x00, 0 , 3}, {10800,93,0x6d, 60, 10}, {10860,93,0x00, 0 ,4},
-        {11040,91,0x79, 80, 5}, {11120,91,0x00, 0, 5}, {12000,86,0x76, 80, 6}, {12080,86,0x00, 0, 6},
+        {480,84,0x75,76, 1}, {556,84,0x00,0, 1}, {960,84,0x75,48, 9}, {1008,84,0x00,0, 2},
+        {1440,91,0x75,80, 5}, {1520,91,0x00,0, 6}, {1920,91,0x75,76, 13}, {1996,91,0x00,0, 7},
+        {2400,93,0x76,72, 6}, {2472,93,0x00,0, 8}, {2640,94,0x67,80, 7}, {2720,94,0x00,0, 7},
+        {2880,96,0x67,80, 8}, {2960,96,0x00,0, 7}, {3120,93,0x6d,60, 15}, {3180,93,0x00,0, 8},
+        {3360,91,0x79,80, 14}, {3440,91,0x00,0, 7}, {4320,89,0x70,88, 5}, {4408,89,0x00,0, 6},
+        {4800,89,0x73, 84, 13}, {4884,89,0x00, 0, 5}, {5280,88,0x73, 80, 4}, {5360,88,0x00, 0, 4},
+        {5760,91,0x79, 76, 12}, {5836,91,0x00, 0, 3}, {6240,86,0x79, 68, 3}, {6308,86,0x00, 0, 2},
+        {6720,86,0x76, 48, 11}, {6768,86,0x00, 0, 1}, {7200,84,0x76, 52, 2}, {7252,84,0x00, 0, 7},//
+        {8160,84,0x73, 76, 1}, {8236,84,0x00,0, 6}, {8640,84,0x74, 48, 9}, {8688,84,0x00, 0, 5},
+        {9120,91,0x76, 80, 5}, {9200,91,0x00, 0, 4}, {9600,91,0x79, 76, 13}, {9676,91,0x00, 0 , 3},
+        {10080,93,0x76, 72, 6}, {10152,93,0x00, 0,1}, {10320,94,0x67, 80, 7}, {10400,94,0x00, 0, 2},
+        {10560,96,0x67, 80, 8}, {10640,96,0x00, 0 , 3}, {10800,93,0x6d, 60, 15}, {10860,93,0x00, 0 ,4},
+        {11040,91,0x79, 80, 14}, {11120,91,0x00, 0, 5}, {12000,86,0x76, 80, 2}, {12080,86,0x00, 0, 6},
         {12480,86,0x73, 72, 7}, {12552,86,0x00, 0, 7}, {13440,84,0x6d, 72, 15}, {13440,88,0x73, 0, 1}, //
         {13508,88,0x00, 0 ,1}, {13512,84,0x00, 0, 8}, {13920,86,0x76, 84, 2}, {14004,86,0x00, 0, 2},
         {14400,86,0x76, 72, 3}, {14472,86,0x00, 0, 3}, {15152,81,0x3b, 36, 4}, {15184,83,0x44, 44, 8},
@@ -162,6 +162,37 @@ int j = 0;
 int8_t flag = 0;
 void TIM2_IRQHandler(void)
 {
+    int arr[8];
+    char score_string[20];
+    //int score_flag = 1;
+    arr[0] = GPIOC->IDR & 0x80; //PC7
+    arr[1] = GPIOC->IDR & 0x100; //PC8
+    arr[2] = GPIOC->IDR & 0x200; //PC9
+
+    arr[3] = GPIOA->IDR & 0x100; //PA8
+    arr[4] = GPIOA->IDR & 0x200; //PA9
+    arr[5] = GPIOA->IDR & 0x400; //PA10
+    arr[6] = GPIOA->IDR & 0x800; //PA11
+    arr[7] = GPIOA->IDR & 0x1000; //PA12
+
+    int score_flag = 1;
+    for(int i = 0; i<8; i++) {
+        if(check_led(i) == 1){
+            if(arr[i] != 0) {
+                if (score_flag == 1){
+                score++;
+                score_flag = 0;}
+                score_flag = 1;
+
+                sprintf(score_string,"%f",score);
+                spi1_display1(score_string);
+                arr[i] = 0;
+               // TIM2->DIER &= ~TIM_DIER_UIE;
+                //
+
+           }
+        }
+    }
 
     TIM2->SR = ~TIM_SR_UIF;
 
@@ -308,27 +339,66 @@ void TIM3_IRQHandler(void){
 
         init_tim15();
         init_tim7();
+//        init_tim14();
          init_wavetable_hybrid2();      // set up wavetable form
          init_dac();         // initialize the DAC
          init_tim6();        // initialize TIM6
          init_tim2(1000); // initialize TIM2
 
+
+         //TIM3->CR1 &= -TIM_CR1_CEN;
+
+
+
     }
 }
 
+void TIM14_IRQHandler(void) {
+
+int arr[8];
+arr[0] = GPIOC->IDR && 0x80; //PC7
+arr[1] = GPIOC->IDR && 0x100; //PC8
+arr[2] = GPIOC->IDR && 0x200; //PC9
+
+arr[3] = GPIOA->IDR && 0x100; //PA8
+arr[4] = GPIOA->IDR && 0x200; //PA9
+arr[5] = GPIOA->IDR && 0x400; //PA10
+arr[6] = GPIOA->IDR && 0x800; //PA11
+arr[7] = GPIOA->IDR && 0x1000; //PA12
+
+for(int i = 0; i<8; i++) {
+    if(arr[i] == 1) {
+        if(check_led(i) == 1) {
+            spi1_display1("score: ");
+                }
+    }
+}
+}
+
+void init_tim14(void){
+    RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+    TIM14->PSC = 0;
+    TIM14->ARR = 4800-1;
+    TIM14->DIER |= TIM_DIER_UIE;
+    TIM14->CR1 |= TIM_CR1_CEN;
+    NVIC->ISER[0] = 1<<19;
+}
 
 
+//PC7 8 9 PA8 9 10 11 12
 void setup_buttons(void)
 {
     RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
-    GPIOC->MODER &= ~0xffff;
-    GPIOC->OTYPER &= ~0xf0;
-    GPIOC->OTYPER |= 0xf0;
-    GPIOC->PUPDR &= ~0xff;
-    GPIOC->PUPDR |= 0x55;
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+    GPIOC->PUPDR |= GPIO_PUPDR_PUPDR7_1;
+    GPIOC->PUPDR |= GPIO_PUPDR_PUPDR8_1;
+    GPIOC->PUPDR |= GPIO_PUPDR_PUPDR9_1;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR8_1;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR9_1;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR10_1;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR11_1;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR12_1;
 
-    RCC->AHBENR |= 1<<17;
-    GPIOA->PUPDR |= 1<<1;
 }
 
 //void basic_drawing(void);
