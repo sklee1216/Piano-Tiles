@@ -104,9 +104,11 @@ void note_off(int time, int chan, int key, int velo)
     }
 }
 
+int count;
 // Find an unused voice, and use it to play a note.
 void note_on(int time, int chan, int key, int velo)
 {
+    count = 0;
     if (velo == 0) {
         note_off(time, chan, key, velo);
         return;
@@ -164,47 +166,38 @@ struct {
 int time = 0;
 int n = 0;
 int j = 0;
+int count = 0;
 int8_t flag = 0;
 void TIM2_IRQHandler(void)
 {
-    int arr[8];
-    char score_string[20];
-    //int score_flag = 1;
-    arr[0] = GPIOC->IDR & 0x80; //PC7
-    arr[1] = GPIOC->IDR & 0x100; //PC8
-    arr[2] = GPIOC->IDR & 0x200; //PC9
-    arr[3] = GPIOA->IDR & 0x100; //PA8
-    arr[4] = GPIOA->IDR & 0x200; //PA9
-    arr[5] = GPIOA->IDR & 0x400; //PA10
-    arr[6] = GPIOA->IDR & 0x800; //PA11
-    arr[7] = GPIOA->IDR & 0x1000; //PA12
-//4491/100
-    int score_flag = 1;
-    for(int i = 0; i < 16; i++) {
-        if(arr[i%8] != 0){
-            if(check_led(i) == 1) {
-//                increase_score(i);
-
-                score ++;
-                sprintf(score_string,"%.0f",score);
-                spi1_display1("Score:");
-                spi1_display2(score_string);
-
-                //arr[i] = 0;
-               // TIM2->DIER &= ~TIM_DIER_UIE;
-                //
-
-           }
-            else{
-                score --;
-                sprintf(score_string,"%.0f",score);
-                spi1_display1("Score:");
-                spi1_display2(score_string);
-            }
-
-        }
-
-    }
+//    int arr[8];
+//    char score_string[20];
+//    //int score_flag = 1;
+//    arr[0] = GPIOC->IDR & 0x80; //PC7
+//    arr[1] = GPIOC->IDR & 0x100; //PC8
+//    arr[2] = GPIOC->IDR & 0x200; //PC9
+//    arr[3] = GPIOA->IDR & 0x100; //PA8
+//    arr[4] = GPIOA->IDR & 0x200; //PA9
+//    arr[5] = GPIOA->IDR & 0x400; //PA10
+//    arr[6] = GPIOA->IDR & 0x800; //PA11
+//    arr[7] = GPIOA->IDR & 0x1000; //PA12
+////4491/100
+//    for(int i = 0; i < 16; i++) {
+//
+//        if(arr[i%8] != 0){
+//            count ++;
+//            if(check_range(i) == 1)
+//                score++;
+//            sprintf(score_string,"%.0f", score/4491*100);
+//            spi1_display1("Score:");
+//            spi1_display2(score_string);
+//            if (count > 1000) {
+//                TIM2->DIER &= ~TIM_DIER_UIE;
+//                spi1_display1("Don't cheat!");
+//                spi1_display2("Press the reset button");
+//            }
+//
+//        }
 
     TIM2->SR = ~TIM_SR_UIF;
 
@@ -230,10 +223,10 @@ void TIM2_IRQHandler(void)
     time += 1;
 
     //When we reach the end of the event array, start over.
-//    if ( n >= sizeof events / sizeof events[0]) {
-//        n = 0;
-//       time = 0;
-//    }
+    if ( n >= sizeof events / sizeof events[0]) {
+        n = 0;
+       time = 0;
+    }
     }
 
 
@@ -365,27 +358,7 @@ void TIM3_IRQHandler(void){
     }
 }
 
-void TIM14_IRQHandler(void) {
 
-int arr[8];
-arr[0] = GPIOC->IDR && 0x80; //PC7
-arr[1] = GPIOC->IDR && 0x100; //PC8
-arr[2] = GPIOC->IDR && 0x200; //PC9
-
-arr[3] = GPIOA->IDR && 0x100; //PA8
-arr[4] = GPIOA->IDR && 0x200; //PA9
-arr[5] = GPIOA->IDR && 0x400; //PA10
-arr[6] = GPIOA->IDR && 0x800; //PA11
-arr[7] = GPIOA->IDR && 0x1000; //PA12
-
-for(int i = 0; i<8; i++) {
-    if(arr[i] == 1) {
-        if(check_led(i) == 1) {
-            spi1_display1("score: ");
-                }
-    }
-}
-}
 
 void init_tim14(void){
     RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;

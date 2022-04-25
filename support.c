@@ -109,8 +109,8 @@ void move_tiles(int tile_num){
 }
 
 //chekc tiles are in the range
-int check_led(int n){
-    if (tiles[n].y2 >290 && tiles[n].y1 < 319){
+int check_range(int n){
+    if (tiles[n].y2 >290 && tiles[n].y1 < 320){
 
         return 1;
     }
