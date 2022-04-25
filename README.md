@@ -7,3 +7,7 @@ Piano Tiles game using C(ARM Cortec-M0)
 4) The notes being shown on the TFT display will be played using our own 
 encoding. 
 5) The microcontroller, resistors, capacitors, etc.
+
+Internal Peripherals:  GPIO Timers SPI DAC
+ 
+External Peripherals:  GPIO SPI Analog
