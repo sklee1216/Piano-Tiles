@@ -230,7 +230,7 @@ void TIM2_IRQHandler(void)
     }
 
     if (b2 == 1){
-        while(events2[n].when == (time-1800)) {
+        while(events2[n].when == (time-1600)) {
         // If the volume is 0, that means turn the note off.
         note_on(0,0,events2[n].note, events2[n].volume);
         flag = 1;
