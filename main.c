@@ -220,8 +220,11 @@ void TIM2_IRQHandler(void)
 
     //When we reach the end of the event array, start over.
     if ( n >= sizeof events / sizeof events[0]) {
-        spi1_display1("Game is over");
-        spi1_display2("press the reset");
+        spi1_display1("Press the first");
+        spi1_display2("button to restart");
+
+        int first_pressed = (GPIOC->IDR >> 7) & 1;
+        if (first_pressed)
         NVIC_SystemReset(); // go back to the main menu
     }
     }
@@ -246,8 +249,11 @@ void TIM2_IRQHandler(void)
 
     //When we reach the end of the event array, start over.
     if ( n >= sizeof events2 / sizeof events2[0]) {
-        spi1_display1("Game is over");
-        spi1_display2("press the reset");
+        spi1_display1("Press the first");
+        spi1_display2("buttons to restart");
+
+        int first_pressed = (GPIOC->IDR >> 7) & 1;
+        if (first_pressed)
         NVIC_SystemReset(); // go back to the main menu
 
     }
