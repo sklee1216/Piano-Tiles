@@ -88,7 +88,7 @@ void move_tiles(int tile_num){
     tiles[tile_num].y2 += 2;
     }
 
-    if (tiles[tile_num].y2 > 290){
+    if (tiles[tile_num].y1 > 270){
         LCD_DrawFillRectangle(tiles[tile_num].x1, 290, tiles[tile_num].x2, 290, WHITE);
     }
 
@@ -101,33 +101,13 @@ void move_tiles(int tile_num){
         tiles[tile_num].y1 -= 340;
         tiles[tile_num].y2 -= 340;
         clear_flag(tile_num);
-
     }
-
-
-
 }
 
 //chekc tiles are in the range
 int check_range(int n){
-    if (tiles[n].y2 >290 && tiles[n].y1 < 320){
-
+    if(tiles[n].y1 > 250 && tiles[n].y1 < 320)
         return 1;
-    }
-    else{
+    else
         return 0;
-    }
-
-}
-
-void init_tiles(void){
-    LCD_Clear(0);
-    LCD_DrawFillRectangle(tiles[0].x1, tiles[0].y1, tiles[0].x2, tiles[0].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[1].x1, tiles[1].y1, tiles[1].x2, tiles[1].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[2].x1, tiles[2].y1, tiles[2].x2, tiles[2].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[3].x1, tiles[3].y1, tiles[3].x2, tiles[3].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[4].x1, tiles[4].y1, tiles[4].x2, tiles[4].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[5].x1, tiles[5].y1, tiles[5].x2, tiles[5].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[6].x1, tiles[6].y1, tiles[6].x2, tiles[6].y2, WHITE);
-    LCD_DrawFillRectangle(tiles[7].x1, tiles[7].y1, tiles[7].x2, tiles[7].y2, WHITE);
 }

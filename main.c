@@ -9,7 +9,6 @@
 void init_tiles(void);
 void nano_wait(unsigned int n);
 void move_tiles(int tile_num);
-//void bottom_line(void);
 
 
 float score = 0;
@@ -38,7 +37,6 @@ struct {
 // samples into the DAC.
 void TIM6_DAC_IRQHandler(void)
 {
-    // TODO: Remember to acknowledge the interrupt right here.
     TIM6->SR = ~TIM_SR_UIF;
 
 
@@ -136,86 +134,68 @@ struct {
     uint16_t track;
 
 } events[] = {
-        {480,84,0x75,76, 1}, {556,84,0x00,0, 1}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
-        {1440,91,0x75,80, 3}, {1520,91,0x00,0, 3}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 4},
-        {2400,93,0x76,72, 5}, {2472,93,0x00,0, 5}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
-        {2880,96,0x67,80, 7}, {2960,96,0x00,0, 7}, {3120,93,0x6d,60, 8}, {3180,93,0x00,0, 8},
-        {3360,91,0x79,80, 9}, {3440,91,0x00,0, 7}, {4320,89,0x70,88, 10}, {4408,89,0x00,0, 6},
-        {4800,89,0x73, 84, 11}, {4884,89,0x00, 0, 5}, {5280,88,0x73, 80, 12}, {5360,88,0x00, 0, 4},
-        {5760,91,0x79, 76, 13}, {5836,91,0x00, 0, 3}, {6240,86,0x79, 68, 14}, {6308,86,0x00, 0, 2},
-        {6720,86,0x76, 48, 1}, {6768,86,0x00, 0, 1}, {7200,84,0x76, 52, 7}, {7252,84,0x00, 0, 7},
-        {8160,84,0x73, 76, 6}, {8236,84,0x00,0, 6}, {8640,84,0x74, 48, 5}, {8688,84,0x00, 0, 5},
-        {9120,91,0x76, 80, 4}, {9200,91,0x00, 0, 4}, {9600,91,0x79, 76, 3}, {9676,91,0x00, 0 , 3},
-        {10080,93,0x76, 72, 1}, {10152,93,0x00, 0,1}, {10320,94,0x67, 80, 2}, {10400,94,0x00, 0, 2},
-        {10560,96,0x67, 80, 9}, {10640,96,0x00, 0 , 3}, {10800,93,0x6d, 60, 10}, {10860,93,0x00, 0 ,4},
-        {11040,91,0x79, 80, 5}, {11120,91,0x00, 0, 5}, {12000,86,0x76, 80, 6}, {12080,86,0x00, 0, 6},
-        {12480,86,0x73, 72, 7}, {12552,86,0x00, 0, 7}, {13440,84,0x6d, 72, 15}, {13440,88,0x73, 0, 1}, //
-        {13508,88,0x00, 0 ,1}, {13512,84,0x00, 0, 8}, {13920,86,0x76, 84, 2}, {14004,86,0x00, 0, 2},
-        {14400,86,0x76, 72, 3}, {14472,86,0x00, 0, 3}, {15152,81,0x3b, 36, 4}, {15184,83,0x44, 44, 8},
-        {15188,81,0x00, 0, 4}, {15220,84,0x46, 44, 7}, {15228,83,0x00, 0, 8}, {15248,86,0x57, 44, 6},
-        {15264,84,0x00, 0, 7}, {15284,88,0x5c, 36, 5}, {15292,86,0x00, 0, 6}, {15308,89,0x68, 36, 8},
-        {15320,88,0x00, 0, 5}, {15336,91,0x6d, 32,7}, {15344,89,0x00, 0, 8}, {15364,93,0x6d, 96, 6},
-        {15368,91,0x00, 0, 7}, {15460,93,0x00, 0, 6}
+//        {480,84,0x75,76, 1}, {556,84,0x00,0, 1}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
+//        {1440,91,0x75,80, 3}, {1520,91,0x00,0, 3}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 4},
+//        {2400,93,0x76,72, 5}, {2472,93,0x00,0, 5}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
+//        {2880,96,0x67,80, 7}, {2960,96,0x00,0, 7}, {3120,93,0x6d,60, 8}, {3180,93,0x00,0, 8},
+//        {3360,91,0x79,80, 9}, {3440,91,0x00,0, 7}, {4320,89,0x70,88, 10}, {4408,89,0x00,0, 6},
+//        {4800,89,0x73, 84, 11}, {4884,89,0x00, 0, 5}, {5280,88,0x73, 80, 12}, {5360,88,0x00, 0, 4},
+//        {5760,91,0x79, 76, 13}, {5836,91,0x00, 0, 3}, {6240,86,0x79, 68, 14}, {6308,86,0x00, 0, 2},
+//        {6720,86,0x76, 48, 1}, {6768,86,0x00, 0, 1}, {7200,84,0x76, 52, 7}, {7252,84,0x00, 0, 7},
+//        {8160,84,0x73, 76, 6}, {8236,84,0x00,0, 6}, {8640,84,0x74, 48, 5}, {8688,84,0x00, 0, 5},
+//        {9120,91,0x76, 80, 4}, {9200,91,0x00, 0, 4}, {9600,91,0x79, 76, 3}, {9676,91,0x00, 0 , 3},
+//        {10080,93,0x76, 72, 1}, {10152,93,0x00, 0,1}, {10320,94,0x67, 80, 2}, {10400,94,0x00, 0, 2},
+//        {10560,96,0x67, 80, 1}, {10640,96,0x00, 0 , 1}, {10800,93,0x6d, 60, 2}, {10860,93,0x00, 0 ,2},
+//        {11040,91,0x79, 80, 5}, {11120,91,0x00, 0, 5}, {12000,86,0x76, 80, 6}, {12080,86,0x00, 0, 6},
+//        {12480,86,0x73, 72, 7}, {12552,86,0x00, 0, 7}, {13440,84,0x6d, 72, 15}, {13440,88,0x73, 0, 1}, //
+//        {13508,88,0x00, 0 ,1}, {13512,84,0x00, 0, 8}, {13920,86,0x76, 84, 2}, {14004,86,0x00, 0, 2},
+//        {14400,86,0x76, 72, 3}, {14472,86,0x00, 0, 3}, {15152,81,0x3b, 36, 4}, {15184,83,0x44, 44, 8},
+//        {15188,81,0x00, 0, 4}, {15220,84,0x46, 44, 7}, {15228,83,0x00, 0, 8}, {15248,86,0x57, 44, 6},
+//        {15264,84,0x00, 0, 7}, {15284,88,0x5c, 36, 5}, {15292,86,0x00, 0, 6}, {15308,89,0x68, 36, 8},
+//        {15320,88,0x00, 0, 5}, {15336,91,0x6d, 32,7}, {15344,89,0x00, 0, 8}, {15364,93,0x6d, 96, 6},
+//        {15368,91,0x00, 0, 7}, {15460,93,0x00, 0, 6}
+
+        //lean on me
+            {480,60,0x75,1,2}, {1200,60,0x00,0,2}, {1300,60,0x76,1,2}, {1700,60,0x00,0,2},
+            {1800,62,0x75,1,3}, {2200,62,0x00,0,3}, {2300,64,0x75,1,4}, {2700,64,0x00,0,4},
+            {2800,65,0x75,1,5}, {3200,65,0x00,0,5}, {4000,65,0x75,1,5},{4400,65,0x00,0,5},
+            {4500,64,0x75,1,4}, {4900,64,0x00,0,4}, {5000,62,0x75,1,3}, {5400,62,0x00,0,3},
+            {5500,60,0x75,1,2}, {5900,60,0x00,0,2},{6700,60,0x75,1,2},{7100,60,0x00,0,2},
+            {7200,62,0x75,1,3},{7600,62,0x0,0,3},{7700,64,0x75,1,4},{8100,64,0x0,0,4},
+            {8200,64,0x75,1,4},{8600,64,0x0,0,4},{8700,62,0x75,1,3},{9100,62,0x00,0,3},
+            {9200,62,0x75,1,3},{9600,62,0x00,0,3}, {10400,60,0x75,1,2}, {11200,60,0x00,0,2},
+            {11300,60,0x75,1,2},{11700,60,0x00,0,2},{11800,62,0x75,1,3},{12200,62,0x00,0,3},
+            {12300,64,0x75,1,4}, {12700,64,0x00,0,4}, {12800,65,0x75,1,5}, {13200,65,0x00,0,5},
+            {14000,65,0x75,1,5},{14400,65,0x00,0,5}, {14500,64,0x75,1,4}, {14900,64,0x00,0,4},
+            {15000,62,0x75,1,3}, {15400,62,0x00,0,3}, {15500,60,0x75,1,2}, {15900,60,0x00,0,2},
+            {16700,60,0x75,1,2},{17100,60,0x00,0,2},{17200,62,0x75,1,3},{17600,62,0x0,0,3},
+            {17700,64,0x75,1,4},{18100,64,0x0,0,4},{18200,59,0x75,1,1},{18800,59,0x00,0,1},
+            {18900,60,0x75,1,2},{19300,60,0x0,0,2},{19400,60,0x75,1,2},{19800,60,0x0,0,2}
 
 };
 
-//void increase_score(int col){
-//    if
-//}
 
 int time = 0;
 int n = 0;
 int j = 0;
 int count = 0;
+float score;
 int8_t flag = 0;
 void TIM2_IRQHandler(void)
 {
-//    int arr[8];
-//    char score_string[20];
-//    //int score_flag = 1;
-//    arr[0] = GPIOC->IDR & 0x80; //PC7
-//    arr[1] = GPIOC->IDR & 0x100; //PC8
-//    arr[2] = GPIOC->IDR & 0x200; //PC9
-//    arr[3] = GPIOA->IDR & 0x100; //PA8
-//    arr[4] = GPIOA->IDR & 0x200; //PA9
-//    arr[5] = GPIOA->IDR & 0x400; //PA10
-//    arr[6] = GPIOA->IDR & 0x800; //PA11
-//    arr[7] = GPIOA->IDR & 0x1000; //PA12
-////4491/100
-//    for(int i = 0; i < 16; i++) {
-//
-//        if(arr[i%8] != 0){
-//            count ++;
-//            if(check_range(i) == 1)
-//                score++;
-//            sprintf(score_string,"%.0f", score/4491*100);
-//            spi1_display1("Score:");
-//            spi1_display2(score_string);
-//            if (count > 1000) {
-//                TIM2->DIER &= ~TIM_DIER_UIE;
-//                spi1_display1("Don't cheat!");
-//                spi1_display2("Press the reset button");
-//            }
-//
-//        }
-
     TIM2->SR = ~TIM_SR_UIF;
 
     while(events[n].when == (time-1800)) {
-            // If the volume is 0, that means turn the note off.
-            note_on(0,0,events[n].note, events[n].volume);
-            flag = 1;
-
-            n++;
-        }
-
+        // If the volume is 0, that means turn the note off.
+        note_on(0,0,events[n].note, events[n].volume);
+        flag = 1;
+        n++;
+    }
     // Look at the next item in the event array and check if it is
     // time to play that note.
     for (int i=0; i < 78; i++){
         if (events[i].when == time && events[i].duration != 0){
-
             set_flag(events[i].track-1);
-
         }
     }
 
@@ -224,23 +204,21 @@ void TIM2_IRQHandler(void)
 
     //When we reach the end of the event array, start over.
     if ( n >= sizeof events / sizeof events[0]) {
-        n = 0;
-       time = 0;
+        spi1_display1("Game is over");
+        spi1_display2("bitch");
     }
-    }
+
+    //spi1_display1("Game is over bitch");
+}
 
 
 // Configure timer 2 so that it invokes the Update interrupt
 // every n microseconds.  To do so, set the prescaler to divide
 // by 48.  Then the CNT will count microseconds up to the ARR value.
 // Basically ARR = n-1
-// Set the ARPE bit in the CR1 so that the timer waits until the next
-// update before changing the effective ARR value.
 // Call NVIC_SetPriority() to set a low priority for Timer 2 interrupt.
 // See the lab 6 text to understand how to do so.
 void init_tim2(int n) {
-
-
     RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
     TIM2->PSC = (48 - 1);
     TIM2->ARR = (n - 1);
@@ -278,7 +256,6 @@ void init_lcd_spi(void)
 }
 
 void init_tim7(void){
-
     RCC->APB1ENR |= RCC_APB1ENR_TIM7EN;
     TIM7->PSC = 25;
     TIM7->ARR = 480000-1;
@@ -286,8 +263,6 @@ void init_tim7(void){
     TIM7->CR1 |= TIM_CR1_CEN;
     NVIC->ISER[0] = 1<<18;
     NVIC_SetPriority(TIM7_IRQn,3);
-
-
 }
 
 void init_tim15(void){
@@ -301,26 +276,18 @@ void init_tim15(void){
 }
 
 void TIM7_IRQHandler(void){
-
     TIM7->SR &= ~(1<<0);
-
     for (int i=0;i<16;i++){
         move_tiles(i);
     }
-
-
 }
 
 void TIM15_IRQHandler(void){
     TIM15->SR &= ~(1<<0);
     int a = (GPIOA->IDR) & 1;
-
     if (a == 1){
         init_tim7();
     }
-
-
-
 }
 
 void init_tim3(void){
@@ -341,32 +308,54 @@ void TIM3_IRQHandler(void){
         spi1_display1("Score:           ");
         spi1_display2("             ");
         TIM3->DIER &= ~TIM_DIER_UIE;
-
+        init_tim14();
         init_tim15();
         init_tim7();
-//        init_tim14();
-         init_wavetable_hybrid2();      // set up wavetable form
-         init_dac();         // initialize the DAC
-         init_tim6();        // initialize TIM6
-         init_tim2(1000); // initialize TIM2
-
-
-         //TIM3->CR1 &= -TIM_CR1_CEN;
-
-
-
+        init_wavetable_hybrid2();      // set up wavetable form
+        init_dac();         // initialize the DAC
+        init_tim6();        // initialize TIM6
+        init_tim2(1000); // initialize TIM2
     }
 }
 
+void TIM14_IRQHandler(void){
 
+    TIM14->SR &= ~(1<<0);
+    int arr[8];
+    char score_string[20];
+
+    arr[0] = GPIOC->IDR & 0x80; //PC7
+    arr[1] = GPIOC->IDR & 0x100; //PC8
+    arr[2] = GPIOC->IDR & 0x200; //PC9
+    arr[3] = GPIOA->IDR & 0x100; //PA8
+    arr[4] = GPIOA->IDR & 0x200; //PA9
+    arr[5] = GPIOA->IDR & 0x400; //PA10
+    arr[6] = GPIOA->IDR & 0x800; //PA11
+    arr[7] = GPIOA->IDR & 0x1000; //PA12
+    for(int i = 0; i < 16; i++) {
+        if(arr[i%8] != 0){
+            if(check_range(i)) {
+                score+= 2;
+            }
+            else{
+                score--;
+            }
+
+            sprintf(score_string,"%5.0f", score);
+            spi1_display1("Score:");
+            spi1_display2(score_string);
+        }
+    }
+}
 
 void init_tim14(void){
     RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
     TIM14->PSC = 0;
-    TIM14->ARR = 4800-1;
+    TIM14->ARR = 480000-1;
     TIM14->DIER |= TIM_DIER_UIE;
     TIM14->CR1 |= TIM_CR1_CEN;
     NVIC->ISER[0] = 1<<19;
+    NVIC_SetPriority(TIM14_IRQn,3);
 }
 
 
@@ -406,25 +395,16 @@ void init_spi1() {
     RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
 
     SPI2->CR1 &= ~SPI_CR1_SPE;
-
     SPI2->CR1 |= SPI_CR1_BR;
-
-//    SPI2->CR2 = SPI_CR2_DS_3 | SPI_CR2_DS_0 | SPI_CR2_SSOE | SPI_CR2_NSSP | SPI_CR2_TXDMAEN;
     SPI2->CR2 = SPI_CR2_DS_3 | SPI_CR2_DS_0 | SPI_CR2_SSOE | SPI_CR2_NSSP;
-
-
     SPI2->CR1 |= SPI_CR1_MSTR;
-
     SPI2->CR1 |= SPI_CR1_SPE;
 
 }
 
 void spi_cmd(unsigned int data) {
     while(!(SPI2->SR & SPI_SR_TXE)) {}
-    SPI2->DR = data; // comment out works?
-
-//    if(!(SPI2->SR & SPI_SR_TXE)) {}
-//    else SPI2->DR = data; // comment out works?
+    SPI2->DR = data;
 }
 void spi_data(unsigned int data) {
     spi_cmd(data | 0x200);
@@ -459,13 +439,6 @@ void spi1_display2(const char *string) {
 
 int main(void)
 {
-
-//    init_wavetable_hybrid2();      // set up wavetable form
-//     init_dac();         // initialize the DAC
-//     init_tim6();        // initialize TIM6
-//     init_tim2(1000); // initialize TIM2
-
-
     setup_buttons();
     LCD_Setup(); // this will call init_lcd_spi()
 
@@ -483,29 +456,13 @@ int main(void)
     LCD_DrawFillRectangle(210, 0, 210, 320, WHITE);
     LCD_DrawFillRectangle(240, 0, 240, 320, WHITE);
 
-    //bottom_line();
-    //init_tiles();
-
     init_tim3();
 
-//
-//
-//
-//
     init_spi1();
     spi1_init_oled();
-//    SPI2->DR = 0;
+
     spi1_display1("Press any button");
     spi1_display2("to start");
-
-//    while(!(SPI2->SR & SPI_SR_TXE)) {}
-//    nano_wait(2000000);
-//    SPI2->CR1 &= ~SPI_CR1_SPE;
-//    RCC->APB1ENR &= ~RCC_APB1ENR_SPI2EN;
-//    nano_wait(2000000);
-
-
-
 
 }
 
