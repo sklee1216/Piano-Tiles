@@ -11,11 +11,11 @@ struct{
     int flag;
     int duration;
     int color;
-} tiles[] = {{1,-76,29,0,0,-20, RED},
+} tiles[] = {{1,-20,29,0,0,-20, RED},
         {31,-20,59,0,0, -20, YELLOW},
         {61,-20,89,0,0, -20, BLUE},
         {91,-20,119,0,0, -20, GREEN},
-        {121,-20,149,0,0, -20, CYAN},
+        {121,-20,149,0,0, -20, GRAY},
         {151,-20,179,0,0, -20, MAGENTA},
         {181,-20,209,0,0, -20, BRRED},
         {211,-20,239,0,0, -20, BROWN},
@@ -23,10 +23,11 @@ struct{
         {31,-20,59,0,0, -20, YELLOW},
         {61,-20,89,0,0, -20, BLUE},
         {91,-20,119,0,0, -20, GREEN},
-        {121,-20,149,0,0, -20, CYAN},
+        {121,-20,149,0,0, -20, GRAY},
         {151,-20,179,0,0, -20, MAGENTA},
         {181,-20,209,0,0, -20, BRRED},
         {211,-20,239,0,0, -20, BROWN},
+
 };
 
 
@@ -96,7 +97,7 @@ void move_tiles(int tile_num){
         if (tile_num == 1) tiles[tile_num].color = YELLOW;
         if (tile_num == 2) tiles[tile_num].color = BLUE;
         if (tile_num == 3) tiles[tile_num].color = GREEN;
-        if (tile_num == 4) tiles[tile_num].color = CYAN;
+        if (tile_num == 4) tiles[tile_num].color = GRAY;
         if (tile_num == 5) tiles[tile_num].color = MAGENTA;
         if (tile_num == 6) tiles[tile_num].color = BRRED;
         if (tile_num == 7) tiles[tile_num].color = BROWN;
@@ -104,10 +105,11 @@ void move_tiles(int tile_num){
         if (tile_num == 9) tiles[tile_num].color = YELLOW;
         if (tile_num == 10) tiles[tile_num].color = BLUE;
         if (tile_num == 11) tiles[tile_num].color = GREEN;
-        if (tile_num == 12) tiles[tile_num].color = CYAN;
+        if (tile_num == 12) tiles[tile_num].color = GRAY;
         if (tile_num == 13) tiles[tile_num].color = MAGENTA;
         if (tile_num == 14) tiles[tile_num].color = BRRED;
         if (tile_num == 15) tiles[tile_num].color = BROWN;
+
     }
 
 

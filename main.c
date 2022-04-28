@@ -34,6 +34,9 @@ void set_next(int tile_num, int duration);
 float score = 0;
 char score_string[10];
 
+
+extern const Picture background;
+
 int a; //first button input
 int b; //second button input
 int a2;
@@ -62,7 +65,7 @@ struct {
     uint16_t track;
 
 } events[] = {
-        {480,84,0x75,76, 1}, {556,84,0x00,0, 1}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
+        {480,84,0x75,76, 1}, {556,84,0x00,0,1}, {960,84,0x75,48, 2}, {1008,84,0x00,0, 2},
         {1440,91,0x75,80, 3}, {1520,91,0x00,0, 3}, {1920,91,0x75,76, 4}, {1996,91,0x00,0, 4},
         {2400,93,0x76,72, 5}, {2472,93,0x00,0, 5}, {2640,94,0x67,80, 6}, {2720,94,0x00,0, 6},
         {2880,96,0x67,80, 7}, {2960,96,0x00,0, 7}, {3120,93,0x6d,60, 8}, {3180,93,0x00,0, 8},
@@ -94,22 +97,23 @@ struct {
     uint16_t duration;
     uint16_t track;
 
+    //2 10 6 14
 } events2[] = {
-        {480,60,0x75,1,2}, {1200,60,0x00,0,2}, {1300,60,0x76,1,10}, {1700,60,0x00,0,2},
-        {1800,62,0x75,1,3}, {2200,62,0x00,0,3}, {2300,64,0x75,1,4}, {2700,64,0x00,0,4},
-        {2800,65,0x75,1,5}, {3200,65,0x00,0,5}, {4000,65,0x75,1,13},{4400,65,0x00,0,5},
-        {4500,64,0x75,1,4}, {4900,64,0x00,0,4}, {5000,62,0x75,1,3}, {5400,62,0x00,0,3},
-        {5500,60,0x75,1,2}, {5900,60,0x00,0,2},{6700,60,0x75,1,10},{7100,60,0x00,0,2},
-        {7200,62,0x75,1,3},{7600,62,0x0,0,3},{7700,64,0x75,1,4},{8100,64,0x0,0,4},
-        {8200,64,0x75,1,12},{8600,64,0x0,0,4},{8700,62,0x75,1,11},{9100,62,0x00,0,3},
-        {9200,62,0x75,1,3},{9600,62,0x00,0,3}, {10400,60,0x75,1,2}, {11200,60,0x00,0,2},
-        {11300,60,0x75,1,10},{11700,60,0x00,0,2},{11800,62,0x75,1,3},{12200,62,0x00,0,3},
-        {12300,64,0x75,1,4}, {12700,64,0x00,0,4}, {12800,65,0x75,1,5}, {13200,65,0x00,0,5},
-        {14000,65,0x75,1,13},{14400,65,0x00,0,5}, {14500,64,0x75,1,4}, {14900,64,0x00,0,4},
-        {15000,62,0x75,1,3}, {15400,62,0x00,0,3}, {15500,60,0x75,1,2}, {15900,60,0x00,0,2},
-        {16700,60,0x75,1,10},{17100,60,0x00,0,2},{17200,62,0x75,1,3},{17600,62,0x0,0,3},
-        {17700,64,0x75,1,4},{18100,64,0x0,0,4},{18200,59,0x75,1,1},{18800,59,0x00,0,1},
-        {18900,60,0x75,1,2},{19300,60,0x0,0,2},{19400,60,0x75,1,10},{19800,60,0x0,0,2}
+        {480,60,0x75,72,1}, {1200,60,0x00,0,1}, {1300,60,0x76,40,2}, {1700,60,0x00,0,2},
+        {1800,62,0x75,40,3}, {2200,62,0x00,0,3}, {2300,64,0x75,30,16}, {2600,64,0x00,0,2},
+        {2800,65,0x76,20,5}, {3100,65,0x00,0,5}, {4000,65,0x76,40,6},{4400,65,0x00,0,6},
+        {4500,64,0x75,40,7}, {4900,64,0x00,0,7}, {5000,62,0x75,40,8}, {5400,62,0x00,0,8},
+        {5500,60,0x75,40,9}, {5900,60,0x00,0,7},{6700,60,0x75,40,10},{7100,60,0x00,0,6},
+        {7200,62,0x75,40,11},{7600,62,0x0,0,5},{7700,64,0x75,40,12},{8100,64,0x0,0,4},
+        {8200,64,0x75,40,13},{8600,64,0x0,0,3},{8700,62,0x75,40,14},{9100,62,0x00,0,2},
+        {9200,62,0x75,40,1},{9600,62,0x00,0,1}, {10400,60,0x75,80,7}, {11200,60,0x00,0,7},
+        {11300,60,0x75,40,6},{11700,60,0x00,0,6},{11800,62,0x75,40,5},{12200,62,0x00,0,5},
+        {12300,64,0x75,40,13}, {12700,64,0x00,0,13}, {12800,65,0x75,40,3}, {13200,65,0x00,0,3},
+        {14000,65,0x75,40,1},{14400,65,0x00,0,1}, {14500,64,0x75,40,2}, {14900,64,0x00,0,2},
+        {15000,62,0x75,40,9}, {15400,62,0x00,0,1}, {15500,60,0x75,50,10}, {15900,60,0x00,0,2},
+        {16700,60,0x75,40,5},{17100,60,0x00,0,5},{17200,62,0x75,40,6},{17600,62,0x0,0,6},
+        {17700,64,0x75,40,7},{18100,64,0x0,0,7},{18200,59,0x75,60,15},{18800,59,0x00,0,1},
+        {18900,60,0x75,40,2},{19300,60,0x0,0,2},{19400,60,0x75,40,10},{19800,60,0x0,0,10}
 };
 
 
@@ -159,7 +163,7 @@ void TIM2_IRQHandler(void)
 {
     TIM2->SR = ~TIM_SR_UIF;
     if (a2 == 1){
-        while(events[n].when == (time-1800)) {
+        while(events[n].when == (time-1650)) {
         // If the volume is 0, that means turn the note off.
             note_on(0,0,events[n].note, events[n].volume);
             n++;
@@ -192,47 +196,49 @@ void TIM2_IRQHandler(void)
             LCD_DrawPicture(0, 0, &background);
 
 
-            int first_pressed = (GPIOC->IDR >> 7) & 1;
+            int first_pressed = (GPIOC->IDR >> 7) & 1; //check if the first button is pressed
             if (first_pressed)
                 NVIC_SystemReset(); // go back to the main menu
         }
     }
     else if (b2 == 1){
-        while(events2[n].when == (time-1600)) {
+        while(events2[n].when == (time-1650)) {
+        // If the volume is 0, that means turn the note off.
             note_on(0,0,events2[n].note, events2[n].volume);
             n++;
         }
-
         for (int i=0; i < sizeof events2 / sizeof events2[0]; i++){
             if (events2[i].when == time && events2[i].duration != 0){
                 set_flag(events2[i].track-1);
-            }
+            //216-227
             if(events2[i+1].duration != 0){
                 set_next(events2[i+1].track-1, events2[i+1].duration);
             }
             else if(events2[i+2].duration != 0){
                 set_next(events2[i+2].track-1, events2[i+2].duration);
             }
-            else if(events2[i+3].duration != 0){
-                set_next(events2[i+3].track-1, events2[i+3].duration);
+//            else if(events2[i+3].duration != 0){
+//                set_next(events2[i+3].track-1, events2[i+3].duration);
+//            }
+//            else if(events2[i+4].duration != 0){
+//                set_next(events2[i+4].track-1, events2[i+4].duration);
+//            }
             }
-            else if(events2[i+4].duration != 0){
-                set_next(events2[i+4].track-1, events2[i+4].duration);
-            }
-         }
+        }
 
     // Increment the time by one tick.
         time += 1;
 
     //When we reach the end of the event array, start over.
-        if ( n >= sizeof events2 / sizeof events2[0]) {
+        if(n >= sizeof events2/sizeof events2[0]) {
 
-            int first_pressed = (GPIOC->IDR >> 7) & 1;
+            LCD_DrawPicture(0, 0, &background);
+
+
+            int first_pressed = (GPIOC->IDR >> 7) & 1; //check if the first button is pressed
             if (first_pressed)
-                NVIC_SystemReset();
-
+                NVIC_SystemReset(); // go back to the main menu
         }
-
     }
 }
 
@@ -362,7 +368,6 @@ void TIM15_IRQHandler(void){
     spi1_display2(score_string);
 }
 
-extern const Picture background;
 
 int main(void)
 {
