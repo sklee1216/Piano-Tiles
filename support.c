@@ -11,7 +11,7 @@ struct{
     int flag;
     int duration;
     int color;
-} tiles[] = {{1,-20,29,0,0,-20, RED},
+} tiles[] = {{1,-30,29,0,0,-20, RED},
         {31,-20,59,0,0, -20, YELLOW},
         {61,-20,89,0,0, -20, BLUE},
         {91,-20,119,0,0, -20, GREEN},
@@ -52,6 +52,7 @@ void nano_wait(unsigned int n) {
 
 
 extern const Picture background; // A 240x320 background image
+extern const Picture background2;
 
 
 void move_tiles(int tile_num){
@@ -83,9 +84,10 @@ void move_tiles(int tile_num){
            else{
                LCD_DrawFillRectangle(tiles[tile_num].x1, tiles[tile_num].y2 +1, tiles[tile_num].x2, tiles[tile_num].y2 + 2, tiles[tile_num].color);
            }
-    tiles[tile_num].y1 += 2;
-    tiles[tile_num].y2 += 2;
+           tiles[tile_num].y1 += 2;
+           tiles[tile_num].y2 += 2;
     }
+
 
     if (tiles[tile_num].y1 > 270){
         LCD_DrawFillRectangle(tiles[tile_num].x1, 290, tiles[tile_num].x2, 290, BLACK);
@@ -113,17 +115,26 @@ void move_tiles(int tile_num){
     }
 
 
-    if (tiles[tile_num].y1 == 320){
+    if (tiles[tile_num].y1 > 320){
+
         tiles[tile_num].y1 = -20;
         tiles[tile_num].y2 = 0;
         clear_flag(tile_num);
+
     }
+}
+
+int check_end(int n){
+    if(tiles[n].y1 == 318){
+        return 1;
+    }
+    else
+        return 0;
 }
 
 //check tiles are in the range
 int check_range(int n){
     if(tiles[n].y2 > 290 && tiles[n].y1 < 320){
-
         return 1;
     }
     else
@@ -163,7 +174,7 @@ void init_tim7(void){
     TIM7->DIER |= TIM_DIER_UIE;
     TIM7->CR1 |= TIM_CR1_CEN;
     NVIC->ISER[0] = 1<<18;
-    NVIC_SetPriority(TIM7_IRQn,3);
+    NVIC_SetPriority(TIM7_IRQn, 3);
 }
 
 void init_tim14(void){
